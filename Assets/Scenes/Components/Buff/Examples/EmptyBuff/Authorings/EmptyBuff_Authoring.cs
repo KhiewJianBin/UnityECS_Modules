@@ -16,9 +16,9 @@ public class EmptyBuff_Authoring : MonoBehaviour
             // 2. Add Entity Components (using data from authoring monobehaviour if needed)
             AddComponent(entity, new EmptyBuffComponent
             {
-                PriorityQueue = 0,
                 DurationTimer = 10,
                 Value = 1,
+                BuffType = BuffTypes.ValueAdd
             });
 
             // Option 1. Add additioanl Entity/+ Component if require

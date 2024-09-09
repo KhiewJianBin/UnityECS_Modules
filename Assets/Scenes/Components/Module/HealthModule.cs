@@ -1,6 +1,4 @@
-using UnityEngine;
-
-public class HealthModule : Module
+public struct HealthModule : IModule
 {
-    public float Health { get; set; } = 100f;
+    public float Health;
 }

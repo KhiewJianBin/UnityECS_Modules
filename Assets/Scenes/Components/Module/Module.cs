@@ -1,7 +1,10 @@
 
-using UnityEngine;
+using Unity.Entities;
 
-public abstract class Module : MonoBehaviour
+/// <summary>
+/// Base Buff Component
+/// </summary>
+public interface IModule : IComponentData
 {
     
 }
