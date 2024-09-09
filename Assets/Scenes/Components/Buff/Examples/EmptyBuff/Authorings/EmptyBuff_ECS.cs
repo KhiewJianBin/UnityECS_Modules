@@ -1,14 +1,14 @@
 using UnityEngine;
 using Unity.Entities;
 
-public class EmptyBuffExample_ECS : MonoBehaviour
+public class EmptyBuff_ECS : MonoBehaviour
 {
     /// <summary>
     /// Setup the Scene
     /// </summary>
-    class Baker : Baker<EmptyBuffExample_ECS>
+    class Baker : Baker<EmptyBuff_ECS>
     {
-        public override void Bake(EmptyBuffExample_ECS authoring)
+        public override void Bake(EmptyBuff_ECS authoring)
         {
             // 1. Create the initial systems in the world
             var buffSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<EmptyBuffSystem>();

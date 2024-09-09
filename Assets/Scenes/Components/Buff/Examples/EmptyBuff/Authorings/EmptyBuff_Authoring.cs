@@ -1,11 +1,8 @@
 using UnityEngine;
 using Unity.Entities;
-using TMPro;
 
 public class EmptyBuff_Authoring : MonoBehaviour
 {
-    public TMP_Text bufftext;
-
     /// <summary>
     /// Convert the GameObject
     /// </summary>
