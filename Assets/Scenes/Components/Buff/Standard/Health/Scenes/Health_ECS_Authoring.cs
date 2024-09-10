@@ -11,7 +11,7 @@ public class Health_ECS_Authoring : MonoBehaviour
         public override void Bake(Health_ECS_Authoring authoring)
         {
             // 1. Create the initial systems in the world
-            var buffSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<HealthBuffSystem>();
+            var buffSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<HealthModuleSystem>();
 
             // 2. Find Existing SystemGroup to insert the system into
             var SimSG = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<SimulationSystemGroup>();
