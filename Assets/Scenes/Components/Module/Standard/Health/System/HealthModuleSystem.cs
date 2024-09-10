@@ -1,5 +1,6 @@
 using Unity.Burst;
 using Unity.Entities;
+using UnityEngine;
 
 /// <summary>
 /// Standard Health Module System
@@ -7,9 +8,17 @@ using Unity.Entities;
 /// </summary>
 [BurstCompile]
 [DisableAutoCreation] // Unity will not this System Automatically
+[UpdateBefore(typeof(BuffableFloatSystem))]
+[UpdateAfter(typeof(HealthBuffSystem))]
 public partial struct HealthModuleSystem : ISystem
 {
-    public void OnCreate(ref SystemState state) { }
+    ComponentLookup<FloatModule> float_LU;
+    ComponentLookup<BuffableFloat> bufffloat_LU;
+    public void OnCreate(ref SystemState state)
+    {
+        float_LU = state.GetComponentLookup<FloatModule>(true);
+        bufffloat_LU = state.GetComponentLookup<BuffableFloat>(true);
+    }
     public void OnDestroy(ref SystemState state) { }
     public void OnStartRunning(ref SystemState state) { }
     public void OnStopRunning(ref SystemState state) { }
@@ -21,24 +30,24 @@ public partial struct HealthModuleSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var float_LU = state.GetComponentLookup<FloatModule>(true);
-        var bufffloat_LU = state.GetComponentLookup<BuffableFloat>(true);
+        float_LU.Update(ref state);
+        bufffloat_LU.Update(ref state);
 
-        foreach (var refmodule in SystemAPI.Query<RefRW<HealthModule>>())
+        foreach (var module in SystemAPI.Query<RefRW<HealthModule>>())
         {
-            refmodule.ValueRW.BaseHealth = float.NaN;
-            refmodule.ValueRW.CurrentHealth = float.NaN;
+            module.ValueRW.BaseHealth = float.NaN;
+            module.ValueRW.CurrentHealth = float.NaN;
 
-            var ebasehealth = refmodule.ValueRW.e_BaseHealth;
+            var ebasehealth = module.ValueRW.e_BaseHealth;
             if (!float_LU.HasComponent(ebasehealth)) return;
 
             var value = float_LU.GetRefRO(ebasehealth).ValueRO;
-            refmodule.ValueRW.BaseHealth = value.BaseValue;
+            module.ValueRW.BaseHealth = value.BaseValue;
 
             if (bufffloat_LU.HasComponent(ebasehealth))
             {
                 var buff = bufffloat_LU.GetRefRO(ebasehealth).ValueRO;
-                refmodule.ValueRW.BaseHealth += buff.BuffedValue;
+                module.ValueRW.BaseHealth += buff.BuffedValue;
             }
         }
     }

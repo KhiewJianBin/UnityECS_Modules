@@ -34,26 +34,26 @@ public class Health_Authoring : MonoBehaviour
                 e_CurrentHealth = currentHealthEntity,
             });
 
-            // Option 1. Add additional Entity + Component if require
-            //var buffEntity = CreateAdditionalEntity(TransformUsageFlags.None, bakingOnlyEntity: false, entityName: "Health Buff");
-            //AddComponent(buffEntity, new HealthBuff()
-            //{
-            //    Target = entity,
 
-            //    DurationTimer = 10,
-            //    Value = 1,
-            //    BuffType = BuffTypes.ValueAdd,
-            //});
+            var buffEntity = CreateAdditionalEntity(TransformUsageFlags.None, bakingOnlyEntity: false, entityName: "Health Buff");
+            AddComponent(buffEntity, new HealthBuff()
+            {
+                Target = entity,
 
-            //var buffEntity2 = CreateAdditionalEntity(TransformUsageFlags.None, bakingOnlyEntity: false, entityName: "Health Buff");
-            //AddComponent(buffEntity2, new HealthBuff()
-            //{
-            //    Target = entity,
+                DurationTimer = 10,
+                Value = 5,
+                BuffType = BuffTypes.ValueAdd,
+            });
 
-            //    DurationTimer = 10,
-            //    Value = 1,
-            //    BuffType = BuffTypes.ValueAdd,
-            //});
+            var buffEntity2 = CreateAdditionalEntity(TransformUsageFlags.None, bakingOnlyEntity: false, entityName: "Health Buff");
+            AddComponent(buffEntity2, new HealthBuff()
+            {
+                Target = entity,
+
+                DurationTimer = 10,
+                Value = 0.5f,
+                BuffType = BuffTypes.ValueMultiply,
+            });
         }
     }
 }

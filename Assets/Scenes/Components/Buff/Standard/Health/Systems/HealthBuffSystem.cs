@@ -8,9 +8,17 @@ using UnityEngine;
 /// </summary>
 [BurstCompile]
 [DisableAutoCreation] // Unity will not this System Automatically
-public partial struct FloatBuffSystem : ISystem, ISystemStartStop
+public partial struct HealthBuffSystem : ISystem, ISystemStartStop
 {
-    public void OnCreate(ref SystemState state) { }
+    ComponentLookup<HealthModule> healthModule_LU;
+    ComponentLookup<FloatModule> float_LU;
+    ComponentLookup<BuffableFloat> bufffloat_LU;
+    public void OnCreate(ref SystemState state)
+    {
+        healthModule_LU = state.GetComponentLookup<HealthModule>(true);
+        float_LU = state.GetComponentLookup<FloatModule>(true);
+        bufffloat_LU = state.GetComponentLookup<BuffableFloat>(false);
+    }
     public void OnDestroy(ref SystemState state) { }
     public void OnStartRunning(ref SystemState state) { }
     public void OnStopRunning(ref SystemState state) { }
@@ -28,34 +36,46 @@ public partial struct FloatBuffSystem : ISystem, ISystemStartStop
         var ecbs = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbs.CreateCommandBuffer(state.WorldUnmanaged);
 
-        foreach (var (refvalue, refbuffvalue, refbuff, buffentity) in SystemAPI.Query<RefRO<FloatModule>, RefRW<BuffableFloat>, RefRW<HealthBuff>>().WithEntityAccess())
-        {
-            var value = refvalue.ValueRO;
-            var buffvalue = refbuffvalue.ValueRW;
-            var buff = refbuff.ValueRW;
+        healthModule_LU.Update(ref state);
+        float_LU.Update(ref state);
+        bufffloat_LU.Update(ref state);
 
-            // Apply Buff, store into buffvalue
-            switch (buff.BuffType)
+        foreach (var (buff, buffentity) in SystemAPI.Query<RefRW<HealthBuff>>().WithEntityAccess())
+        {
+            var target = buff.ValueRO.Target;
+
+            if (!healthModule_LU.HasComponent(target)) return;
+
+            var healthModule = healthModule_LU.GetRefRO(target);
+            var bufftarget = healthModule.ValueRO.e_BaseHealth;
+
+            if (!float_LU.HasComponent(bufftarget) || !bufffloat_LU.HasComponent(bufftarget)) return;
+
+            var reffloat = float_LU.GetRefRO(bufftarget);
+            var refbufffloat = bufffloat_LU.GetRefRW(bufftarget);
+
+            // Apply Buff, store into bufffloat
+            switch (buff.ValueRO.BuffType)
             {
                 case BuffTypes.ValueAdd:
-                    buffvalue.BuffedValue += buff.Value;
+                    refbufffloat.ValueRW.BuffedValue += buff.ValueRO.Value;
                     break;
                 case BuffTypes.ValueMultiply:
-                    buffvalue.BuffedValue *= buff.Value;
+                    refbufffloat.ValueRW.BuffedValue += reffloat.ValueRO.BaseValue * buff.ValueRO.Value;
                     break;
                 default:
                     break;
             }
 
             // Update Timer
-            buff.DurationTimer -= deltaTime;
+            buff.ValueRW.DurationTimer -= deltaTime;
 
             // Queue for Removal When Expired
-            bool Expired = buff.DurationTimer <= 0;
+            bool Expired = buff.ValueRW.DurationTimer <= 0;
             if (Expired)
             {
-                ecb.RemoveComponent<EmptyBuffComponent>(buffentity);
-                Debug.Log("Expired!. Queued for Removal");
+                ecb.RemoveComponent<HealthBuff>(buffentity);
+                Debug.Log("Expired, Removeing" + buffentity);
             }
         }
     }
