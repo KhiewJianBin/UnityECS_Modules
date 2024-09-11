@@ -30,21 +30,19 @@ public partial struct PlayerSpawnerSystem : ISystem, ISystemStartStop
             if (player == null) continue;
 
             var baseHealthEntity = entityManager.CreateEntity();
-            entityManager.SetName(baseHealthEntity, nameof(baseHealthEntity));
             entityManager.AddComponentData(baseHealthEntity, new FloatModule()
             {
                 BaseValue = Random.Range(0,1000000)
             });
+            entityManager.AddComponentData(baseHealthEntity, new BuffableFloat());
 
             var currentHealthEntity = entityManager.CreateEntity();
-            entityManager.SetName(currentHealthEntity, nameof(currentHealthEntity));
             entityManager.AddComponentData(currentHealthEntity, new FloatModule()
             {
                 BaseValue = 99
             });
 
             var entityPlayer = entityManager.CreateEntity();
-            entityManager.SetName(entityPlayer, nameof(entityPlayer));
             entityManager.AddComponentData(entityPlayer, new HealthModule()
             {
                 BaseHealth = 1,
@@ -53,7 +51,18 @@ public partial struct PlayerSpawnerSystem : ISystem, ISystemStartStop
             });
 
             player.entityRef = entityPlayer;
+
+            var buffEntity = entityManager.CreateEntity();
+            entityManager.AddComponentData(buffEntity, new BaseHealthBuff()
+            {
+                Target = entityPlayer,
+
+                DurationTimer = float.PositiveInfinity,
+                Value = 1,
+                BuffType = BuffTypes.ValueAdd,
+            });
         }
+
         data.PlayersToSpawn.Clear();
     }
 }

@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-public struct HealthBuff : IComponentData
+public struct BaseHealthBuff : IComponentData
 {
     public Entity Target;
 

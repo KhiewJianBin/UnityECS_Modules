@@ -22,6 +22,6 @@ public class Player : MonoBehaviour
         if (!em.HasComponent<HealthModule>(entityRef)) return;
 
         var hp = em.GetComponentData<HealthModule>(entityRef); 
-        healthtext.text = "Your Health is " + hp.BaseHealth.ToString();
+        healthtext.text = "HP: " + hp.BaseHealth.ToString();
     }
 }

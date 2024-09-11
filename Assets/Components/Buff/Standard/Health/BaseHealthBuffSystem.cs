@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 [BurstCompile]
 [DisableAutoCreation] // Unity will not this System Automatically
-public partial struct HealthBuffSystem : ISystem, ISystemStartStop
+public partial struct BaseHealthBuffSystem : ISystem, ISystemStartStop
 {
     ComponentLookup<HealthModule> healthModule_LU;
     ComponentLookup<FloatModule> float_LU;
@@ -39,7 +39,7 @@ public partial struct HealthBuffSystem : ISystem, ISystemStartStop
         float_LU.Update(ref state);
         bufffloat_LU.Update(ref state);
 
-        foreach (var (buff, buffentity) in SystemAPI.Query<RefRW<HealthBuff>>().WithEntityAccess())
+        foreach (var (buff, buffentity) in SystemAPI.Query<RefRW<BaseHealthBuff>>().WithEntityAccess())
         {
             var target = buff.ValueRO.Target;
 
@@ -73,7 +73,7 @@ public partial struct HealthBuffSystem : ISystem, ISystemStartStop
             bool Expired = buff.ValueRW.DurationTimer <= 0;
             if (Expired)
             {
-                ecb.RemoveComponent<HealthBuff>(buffentity);
+                ecb.RemoveComponent<BaseHealthBuff>(buffentity);
                 Debug.Log("Expired, Removeing" + buffentity);
             }
         }

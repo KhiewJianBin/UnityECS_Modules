@@ -36,7 +36,7 @@ public class Health_Authoring : MonoBehaviour
 
 
             var buffEntity = CreateAdditionalEntity(TransformUsageFlags.None, bakingOnlyEntity: false, entityName: "Health Buff");
-            AddComponent(buffEntity, new HealthBuff()
+            AddComponent(buffEntity, new BaseHealthBuff()
             {
                 Target = entity,
 
@@ -46,7 +46,7 @@ public class Health_Authoring : MonoBehaviour
             });
 
             var buffEntity2 = CreateAdditionalEntity(TransformUsageFlags.None, bakingOnlyEntity: false, entityName: "Health Buff");
-            AddComponent(buffEntity2, new HealthBuff()
+            AddComponent(buffEntity2, new BaseHealthBuff()
             {
                 Target = entity,
 
