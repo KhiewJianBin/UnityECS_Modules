@@ -10,9 +10,10 @@ public partial struct PlayerSpawnerSystem : ISystem, ISystemStartStop
     public void OnCreate(ref SystemState state)
     {
         var required = state.EntityManager.CreateEntity();
-        state.EntityManager.AddComponentData(required, new PlayerSpawnerData());
+        state.EntityManager.AddComponentData(required, new PlayersSpawnerData());
+        state.EntityManager.AddComponentData(required, new PlayersManagedData());
 
-        state.RequireForUpdate<PlayerSpawnerData>();
+        state.RequireForUpdate<PlayersSpawnerData>();
     }
     public void OnDestroy(ref SystemState state) { }
     public void OnStartRunning(ref SystemState state) { }
@@ -21,14 +22,11 @@ public partial struct PlayerSpawnerSystem : ISystem, ISystemStartStop
     public void OnUpdate(ref SystemState state)
     {
         var entityManager = state.EntityManager;
-        var data = SystemAPI.ManagedAPI.GetSingleton<PlayerSpawnerData>();
+        var spawnerData = SystemAPI.ManagedAPI.GetSingleton<PlayersSpawnerData>();
+        var playersData = SystemAPI.ManagedAPI.GetSingleton<PlayersManagedData>();
 
-        if (data == null) return;
-
-        foreach (var player in data.PlayersToSpawn)
+        foreach (var player in spawnerData.PlayersToSpawn)
         {
-            if (player == null) continue;
-
             var baseHealthEntity = entityManager.CreateEntity();
             entityManager.AddComponentData(baseHealthEntity, new FloatModule()
             {
@@ -61,13 +59,20 @@ public partial struct PlayerSpawnerSystem : ISystem, ISystemStartStop
                 Value = 1,
                 BuffType = BuffTypes.ValueAdd,
             });
+
+            //playersData.Players.Add(player);
         }
 
-        data.PlayersToSpawn.Clear();
+        spawnerData.PlayersToSpawn.Clear();
     }
 }
 
-public class PlayerSpawnerData : IComponentData
+public class PlayersSpawnerData : IComponentData
 {
     public List<Player> PlayersToSpawn = new();
+}
+
+public class PlayersManagedData : IComponentData
+{
+    public List<Player> Players = new();
 }

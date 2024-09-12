@@ -1,10 +1,9 @@
-using TMPro;
 using Unity.Entities;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public TMP_Text healthtext;
+    public float Health;
 
     public Entity entityRef;
 
@@ -13,15 +12,14 @@ public class Player : MonoBehaviour
     {
         em = World.DefaultGameObjectInjectionWorld.EntityManager;
 
-        EntityQuery colorTablesQ = em.CreateEntityQuery(new ComponentType[] { typeof(PlayerSpawnerData) });
-        var a = colorTablesQ.GetSingleton<PlayerSpawnerData>();
+        EntityQuery query = em.CreateEntityQuery(new ComponentType[] { typeof(PlayersSpawnerData) });
+        var a = query.GetSingleton<PlayersSpawnerData>();
         a.PlayersToSpawn.Add(this);
     }
     void Update()
     {
         if (!em.HasComponent<HealthModule>(entityRef)) return;
-
-        var hp = em.GetComponentData<HealthModule>(entityRef); 
-        healthtext.text = "HP: " + hp.BaseHealth.ToString();
+        var hp = em.GetComponentData<HealthModule>(entityRef);
+        Health = hp.BaseHealth;
     }
 }
