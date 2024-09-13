@@ -1,5 +1,8 @@
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Physics;
+using UnityEngine;
 
 [BurstCompile]
 [DisableAutoCreation]
@@ -15,6 +18,8 @@ public partial struct PlayerUpdateSystem : ISystem, ISystemStartStop
 
     public void OnUpdate(ref SystemState state)
     {
+        var time = (float)SystemAPI.Time.ElapsedTime;
+
         var playersData = SystemAPI.ManagedAPI.GetSingleton<PlayersManagedData>();
         var healths = SystemAPI.GetComponentLookup<HealthModule>();
 
@@ -24,6 +29,8 @@ public partial struct PlayerUpdateSystem : ISystem, ISystemStartStop
             {
                 player.Health = health.BaseHealth;
             }
+
+            //player.transform.position = new Vector3(math.sin(3 * time), player.transform.position.y, player.transform.position.z);
         }
     }
 }

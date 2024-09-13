@@ -12,14 +12,9 @@ public class Player : MonoBehaviour
     {
         em = World.DefaultGameObjectInjectionWorld.EntityManager;
 
+        // Add to a list which an ECS system will Spawn a copy of it as Entity+Data in ECS world
         EntityQuery query = em.CreateEntityQuery(new ComponentType[] { typeof(PlayersSpawnerData) });
         var a = query.GetSingleton<PlayersSpawnerData>();
         a.PlayersToSpawn.Add(this);
-    }
-    void Update()
-    {
-        if (!em.HasComponent<HealthModule>(entityRef)) return;
-        var hp = em.GetComponentData<HealthModule>(entityRef);
-        Health = hp.BaseHealth;
     }
 }

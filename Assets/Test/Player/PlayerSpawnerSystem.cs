@@ -41,6 +41,7 @@ public partial struct PlayerSpawnerSystem : ISystem, ISystemStartStop
             });
 
             var entityPlayer = entityManager.CreateEntity();
+            entityManager.SetName(entityPlayer, "Player");
             entityManager.AddComponentData(entityPlayer, new HealthModule()
             {
                 BaseHealth = 1,
@@ -50,17 +51,17 @@ public partial struct PlayerSpawnerSystem : ISystem, ISystemStartStop
 
             player.entityRef = entityPlayer;
 
-            var buffEntity = entityManager.CreateEntity();
-            entityManager.AddComponentData(buffEntity, new BaseHealthBuff()
-            {
-                Target = entityPlayer,
+            //var buffEntity = entityManager.CreateEntity();
+            //entityManager.AddComponentData(buffEntity, new BaseHealthBuff()
+            //{
+            //    Target = entityPlayer,
 
-                DurationTimer = float.PositiveInfinity,
-                Value = 1,
-                BuffType = BuffTypes.ValueAdd,
-            });
+            //    DurationTimer = float.PositiveInfinity,
+            //    Value = 1,
+            //    BuffType = BuffTypes.ValueAdd,
+            //});
 
-            //playersData.Players.Add(player);
+            playersData.Players.Add(player);
         }
 
         spawnerData.PlayersToSpawn.Clear();

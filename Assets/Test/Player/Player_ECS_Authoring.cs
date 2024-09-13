@@ -20,23 +20,37 @@ public class Player_ECS_Authoring : MonoBehaviour
 
             // 2. Find Existing SystemGroup to insert the system into
             var InitSG = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<InitializationSystemGroup>();
+            var SimSG = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<SimulationSystemGroup>();
+            var PresentSG = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PresentationSystemGroup>();
 
             var BuffStartSG = World.DefaultGameObjectInjectionWorld.CreateSystemManaged<BuffStartSystemGroup>();
             var ModuleSG = World.DefaultGameObjectInjectionWorld.CreateSystemManaged<ModuleSystemGroup>();
             var BuffResetSG = World.DefaultGameObjectInjectionWorld.CreateSystemManaged<BuffResetSystemGroup>();
 
-
-            InitSG.AddSystemToUpdateList(BuffStartSG);
-            InitSG.AddSystemToUpdateList(ModuleSG);
-            InitSG.AddSystemToUpdateList(BuffResetSG);
-
             // 3. Add System to Appropriate Group
-            InitSG.AddSystemToUpdateList(PlayerSpawnerSystemHandle);
-            InitSG.AddSystemToUpdateList(PlayerUpdateSystemHandle);
 
-            BuffStartSG.AddSystemToUpdateList(healthbuffSystemHandle);
-            ModuleSG.AddSystemToUpdateList(healthSystemHandle);
-            //BuffResetSG.AddSystemToUpdateList(BuffableFloatSystemHandle);
+            // ========================  InitializationSystemGroup   ==============================
+            InitSG.AddSystemToUpdateList(PlayerSpawnerSystemHandle);
+
+            // ===========================  SimulationSystemGroup       ===========================
+            SimSG.AddSystemToUpdateList(BuffStartSG);
+            {
+                BuffStartSG.AddSystemToUpdateList(healthbuffSystemHandle);
+            }
+            SimSG.AddSystemToUpdateList(ModuleSG);
+            {
+                ModuleSG.AddSystemToUpdateList(healthSystemHandle);
+            }
+            SimSG.AddSystemToUpdateList(BuffResetSG);
+            {
+                BuffResetSG.AddSystemToUpdateList(BuffableFloatSystemHandle);
+            }
+
+            // ===========================  PresentationSystemGroup  ===========================
+            PresentSG.AddSystemToUpdateList(PlayerUpdateSystemHandle);
+
+
+
         }
     }
 }
