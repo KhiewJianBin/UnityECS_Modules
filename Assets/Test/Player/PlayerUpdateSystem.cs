@@ -2,6 +2,7 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
+using Unity.Transforms;
 using UnityEngine;
 
 [BurstCompile]
@@ -31,6 +32,11 @@ public partial struct PlayerUpdateSystem : ISystem, ISystemStartStop
             }
 
             //player.transform.position = new Vector3(math.sin(3 * time), player.transform.position.y, player.transform.position.z);
+        }
+
+        foreach (var (health,transform) in SystemAPI.Query<RefRW<HealthModule>, RefRW<LocalTransform>>())
+        {
+            transform.ValueRW.Position = new Vector3(math.sin(3 * time), transform.ValueRW.Position.y, transform.ValueRW.Position.z);
         }
     }
 }

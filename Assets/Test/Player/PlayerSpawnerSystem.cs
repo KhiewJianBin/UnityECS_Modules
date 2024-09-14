@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Transforms;
 using UnityEngine;
 
 [BurstCompile]
@@ -48,6 +49,8 @@ public partial struct PlayerSpawnerSystem : ISystem, ISystemStartStop
                 e_BaseHealth = baseHealthEntity,
                 e_CurrentHealth = currentHealthEntity,
             });
+
+            entityManager.AddComponentData(entityPlayer, LocalTransform.FromMatrix(player.transform.localToWorldMatrix));
 
             player.entityRef = entityPlayer;
 
