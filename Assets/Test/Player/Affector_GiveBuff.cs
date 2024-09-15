@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class Affector_GiveBuff : MonoBehaviour
 {
+    [SerializeField]
+    public BaseHealthBuff buff;
+
     class Baker : Baker<Affector_GiveBuff>
     {
         public override void Bake(Affector_GiveBuff authoring)
@@ -10,12 +13,14 @@ public class Affector_GiveBuff : MonoBehaviour
             var entityPlayer = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entityPlayer, new GiveBuffData()
             {
-                buff = new BaseHealthBuff()
-                {
-                    DurationTimer = 1,
-                    Value = 1,
-                    BuffType = BuffTypes.ValueAdd,
-                }
+                //buff = new BaseHealthBuff()
+                //{
+                //    DurationTimer = 1,
+                //    Value = 1,
+                //    BuffType = BuffTypes.ValueAdd,
+                //}
+
+                buff = authoring.buff
             });
         }
     }

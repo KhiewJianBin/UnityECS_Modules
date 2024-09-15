@@ -19,23 +19,9 @@ public partial struct Affector_GiveBuffSystem : ISystem, ISystemStartStop
 
     public void OnUpdate(ref SystemState state)
     {
-        //var time = (float)SystemAPI.Time.ElapsedTime;
-
-        //var world = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
-        //var collisionworld = world.CollisionWorld;
-
-        //OverlapAabbInput input = new()
-        //{
-        //    Aabb = new Aabb(),
-        //    Filter = new CollisionFilter()
-        //};
-
-        //NativeList<int> hits = new();
-        //collisionworld.OverlapAabb(input, ref hits);
-
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
 
-        state.Dependency = new TriggerDeathJob
+        state.Dependency = new GiveBuffInTrigger_Job
         {
             Ecb = ecb,
             GiveBuff_LU = SystemAPI.GetComponentLookup<GiveBuffData>(true),
@@ -46,17 +32,10 @@ public partial struct Affector_GiveBuffSystem : ISystem, ISystemStartStop
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
-
-        //state.CompleteDependency();
-
-        // physicsWorldSingleton.CastRay(...);
-
-        // It is also possible to access the PhysicsWorld
-        //PhysicsWorld world = physicsWorldSingleton.PhysicsWorld;
     }
 
     [BurstCompile]
-    struct TriggerDeathJob : ITriggerEventsJob
+    struct GiveBuffInTrigger_Job : ITriggerEventsJob
     {
         public EntityCommandBuffer Ecb;
         [ReadOnly] public ComponentLookup<GiveBuffData> GiveBuff_LU;
