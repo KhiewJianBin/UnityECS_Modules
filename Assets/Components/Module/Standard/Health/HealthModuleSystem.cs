@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Unity.Burst;
 using Unity.Entities;
 
@@ -36,15 +37,29 @@ public partial struct HealthModuleSystem : ISystem
             module.ValueRW.CurrentHealth = float.NaN;
 
             var ebasehealth = module.ValueRW.e_BaseHealth;
-            if (!float_LU.HasComponent(ebasehealth)) return;
-
-            var value = float_LU.GetRefRO(ebasehealth).ValueRO;
-            module.ValueRW.BaseHealth = value.BaseValue;
-
-            if (bufffloat_LU.HasComponent(ebasehealth))
+            if (float_LU.HasComponent(ebasehealth))
             {
-                var buff = bufffloat_LU.GetRefRO(ebasehealth).ValueRO;
-                module.ValueRW.BaseHealth += buff.BuffedValue;
+                var value = float_LU.GetRefRO(ebasehealth).ValueRO;
+                module.ValueRW.BaseHealth = value.BaseValue;
+
+                if (bufffloat_LU.HasComponent(ebasehealth))
+                {
+                    var buff = bufffloat_LU.GetRefRO(ebasehealth).ValueRO;
+                    module.ValueRW.BaseHealth += buff.BuffedValue;
+                }
+            }
+
+            var ecurrenthealth = module.ValueRW.e_CurrentHealth;
+            if (float_LU.HasComponent(ecurrenthealth))
+            {
+                var value = float_LU.GetRefRO(ecurrenthealth).ValueRO;
+                module.ValueRW.CurrentHealth = value.BaseValue;
+
+                if (bufffloat_LU.HasComponent(ecurrenthealth))
+                {
+                    var buff = bufffloat_LU.GetRefRO(ecurrenthealth).ValueRO;
+                    module.ValueRW.CurrentHealth += buff.BuffedValue;
+                }
             }
         }
     }

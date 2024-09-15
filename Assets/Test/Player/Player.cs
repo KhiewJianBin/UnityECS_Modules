@@ -3,19 +3,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public float Health;
+    [Header("Authoring")]
+    public float BaseHealth;
+    public float CurrentHealth;
 
-    public Entity entityRef;
-
-    void Start()
-    {
-        //em = World.DefaultGameObjectInjectionWorld.EntityManager;
-
-        //// Add to a list which an ECS system will Spawn a copy of it as Entity+Data in ECS world
-        //EntityQuery query = em.CreateEntityQuery(new ComponentType[] { typeof(PlayersSpawnerData) });
-        //var a = query.GetSingleton<PlayersSpawnerData>();
-        //a.PlayersToSpawn.Add(this);
-    }
+    [Header("Output")]
+    public float baseHealth;
+    public float currentHleath;
 
     class Baker : Baker<Player>
     {
@@ -24,20 +18,20 @@ public class Player : MonoBehaviour
             var baseHealthEntity = CreateAdditionalEntity(TransformUsageFlags.None, false, nameof(FloatModule));
             AddComponent(baseHealthEntity, new FloatModule()
             {
-                BaseValue = Random.Range(0, 1000000)
+                BaseValue = authoring.BaseHealth
             });
             AddComponent(baseHealthEntity, new BuffableFloat());
 
-            var currentHealthEntity = CreateAdditionalEntity(TransformUsageFlags.None, false, nameof(BuffableFloat));
+            var currentHealthEntity = CreateAdditionalEntity(TransformUsageFlags.None, false, nameof(FloatModule));
             AddComponent(currentHealthEntity, new FloatModule()
             {
-                BaseValue = 99
+                BaseValue = authoring.CurrentHealth
             });
+            AddComponent(currentHealthEntity, new BuffableFloat());
 
-            var entityPlayer = GetEntity(TransformUsageFlags.None);
+            var entityPlayer = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entityPlayer, new HealthModule()
             {
-                BaseHealth = 1,
                 e_BaseHealth = baseHealthEntity,
                 e_CurrentHealth = currentHealthEntity,
             });
@@ -58,4 +52,9 @@ public class Player : MonoBehaviour
             });
         }
     }
+}
+
+public class PlayerData : IComponentData
+{
+    public Player player_ref;
 }

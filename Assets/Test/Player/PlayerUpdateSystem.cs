@@ -1,7 +1,6 @@
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Physics;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -34,12 +33,13 @@ public partial struct PlayerUpdateSystem : ISystem, ISystemStartStop
 
         foreach (var (player, health) in SystemAPI.Query<PlayerData, RefRO<HealthModule>>())
         {
-            player.player_ref.Health = health.ValueRO.BaseHealth;
+            player.player_ref.baseHealth = health.ValueRO.BaseHealth;
+            player.player_ref.currentHleath = health.ValueRO.CurrentHealth;
         }
 
-        foreach (var (health, transform) in SystemAPI.Query<RefRW<HealthModule>, RefRW<LocalTransform>>())
-        {
-            transform.ValueRW.Position = new Vector3(math.sin(3 * time), transform.ValueRW.Position.y, transform.ValueRW.Position.z);
-        }
+        //foreach (var (health, transform) in SystemAPI.Query<RefRW<HealthModule>, RefRW<LocalTransform>>())
+        //{
+        //    transform.ValueRW.Position = new Vector3(math.sin(3 * time), transform.ValueRW.Position.y, transform.ValueRW.Position.z);
+        //}
     }
 }

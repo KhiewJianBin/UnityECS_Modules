@@ -52,8 +52,6 @@ public partial struct PlayerSpawnerSystem : ISystem, ISystemStartStop
 
             entityManager.AddComponentData(entityPlayer, LocalTransform.FromMatrix(player.transform.localToWorldMatrix));
 
-            player.entityRef = entityPlayer;
-
             var buffEntity = entityManager.CreateEntity();
             entityManager.AddComponentData(buffEntity, new BaseHealthBuff()
             {
