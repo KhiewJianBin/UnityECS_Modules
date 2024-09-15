@@ -31,15 +31,11 @@ public partial struct PlayerUpdateSystem : ISystem, ISystemStartStop
         //    }
         //}
 
-        foreach (var (player, health) in SystemAPI.Query<PlayerData, RefRO<HealthModule>>())
+        foreach (var (player, health, transform) in SystemAPI.Query<PlayerData, RefRO<HealthModule>, RefRW<LocalTransform>>())
         {
             player.player_ref.baseHealth = health.ValueRO.BaseHealth;
             player.player_ref.currentHleath = health.ValueRO.CurrentHealth;
+            transform.ValueRW.Position = new Vector3(10 * math.sin(time), transform.ValueRW.Position.y, transform.ValueRW.Position.z);
         }
-
-        //foreach (var (health, transform) in SystemAPI.Query<RefRW<HealthModule>, RefRW<LocalTransform>>())
-        //{
-        //    transform.ValueRW.Position = new Vector3(math.sin(3 * time), transform.ValueRW.Position.y, transform.ValueRW.Position.z);
-        //}
     }
 }

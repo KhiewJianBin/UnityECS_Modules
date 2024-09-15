@@ -73,8 +73,8 @@ public partial struct BaseHealthBuffSystem : ISystem, ISystemStartStop
             bool Expired = buff.ValueRW.DurationTimer <= 0;
             if (Expired)
             {
-                ecb.RemoveComponent<BaseHealthBuff>(buffentity);
-                Debug.Log("Expired, Removeing" + buffentity);
+                ecb.DestroyEntity(buffentity);
+                //Debug.Log("Expired, Removing" + buffentity);
             }
         }
     }

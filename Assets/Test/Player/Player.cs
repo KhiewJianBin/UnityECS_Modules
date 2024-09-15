@@ -36,15 +36,15 @@ public class Player : MonoBehaviour
                 e_CurrentHealth = currentHealthEntity,
             });
 
-            var buff = CreateAdditionalEntity(TransformUsageFlags.None, false, nameof(BaseHealthBuff));
-            AddComponent(buff, new BaseHealthBuff()
-            {
-                Target = entityPlayer,
+            //var buff = CreateAdditionalEntity(TransformUsageFlags.None, false, nameof(BaseHealthBuff));
+            //AddComponent(buff, new BaseHealthBuff()
+            //{
+            //    Target = entityPlayer,
 
-                DurationTimer = float.PositiveInfinity,
-                Value = 1,
-                BuffType = BuffTypes.ValueAdd,
-            });
+            //    DurationTimer = float.PositiveInfinity,
+            //    Value = 1,
+            //    BuffType = BuffTypes.ValueAdd,
+            //});
 
             AddComponentObject(entityPlayer, new PlayerData()
             {
