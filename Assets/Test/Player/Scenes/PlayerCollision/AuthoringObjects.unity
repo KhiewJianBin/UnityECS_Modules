@@ -190,7 +190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buff:
-    DurationTimer: -0.69
+    DurationTimer: 100
     Value: 1
     BuffType: 0
 --- !u!1001 &1843166502

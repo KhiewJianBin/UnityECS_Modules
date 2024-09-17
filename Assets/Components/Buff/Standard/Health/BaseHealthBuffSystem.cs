@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
@@ -38,6 +41,30 @@ public partial struct BaseHealthBuffSystem : ISystem, ISystemStartStop
         healthModule_LU.Update(ref state);
         float_LU.Update(ref state);
         bufffloat_LU.Update(ref state);
+
+        //Stack Buff
+        EntityCommandBuffer ecb2 = new EntityCommandBuffer(Allocator.TempJob);
+        HashSet<(BaseHealthBuff buff, Entity entity)> existing = new HashSet<(BaseHealthBuff, Entity)>();
+        foreach (var (buff, buffentity) in SystemAPI.Query<RefRW<BaseHealthBuff>>().WithEntityAccess())
+        {
+            var existingbuff = existing.FirstOrDefault(bhb => bhb.buff.Target == buff.ValueRO.Target);
+
+            if (existingbuff.entity != default)
+            {
+                existingbuff.buff = buff.ValueRW.Stack(existingbuff.buff);
+                existing.Add(existingbuff);
+            }
+            else
+            {
+                existing.Remove(existingbuff);
+                ecb2.DestroyEntity(existingbuff.entity);
+
+                existingbuff.buff = buff.ValueRW.Stack(existingbuff.buff);
+                existing.Add(existingbuff);
+            }
+        }
+        ecb2.Playback(state.EntityManager);
+        ecb2.Dispose();
 
         foreach (var (buff, buffentity) in SystemAPI.Query<RefRW<BaseHealthBuff>>().WithEntityAccess())
         {
