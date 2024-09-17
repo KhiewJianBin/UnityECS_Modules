@@ -2,15 +2,14 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Physics;
-using UnityEngine;
 
 [BurstCompile]
 [DisableAutoCreation]
-public partial struct Affector_GiveBuffSystem : ISystem, ISystemStartStop
+public partial struct Affector_GiveBaseHealthBuffSystem : ISystem, ISystemStartStop
 {
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<GiveBuffData>();
+        state.RequireForUpdate<GiveBaseHealthBuffData>();
         state.RequireForUpdate<SimulationSingleton>();
     }
     public void OnDestroy(ref SystemState state) { }
@@ -19,13 +18,14 @@ public partial struct Affector_GiveBuffSystem : ISystem, ISystemStartStop
 
     public void OnUpdate(ref SystemState state)
     {
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
+        EntityCommandBuffer ecb = new(Allocator.TempJob);
 
         state.Dependency = new GiveBuffInTrigger_Job
         {
             Ecb = ecb,
-            GiveBuff_LU = SystemAPI.GetComponentLookup<GiveBuffData>(true),
+            GiveBuff_LU = SystemAPI.GetComponentLookup<GiveBaseHealthBuffData>(true),
             Health_LU = SystemAPI.GetComponentLookup<HealthModule>(true),
+
         }.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
 
         state.Dependency.Complete();
@@ -38,12 +38,12 @@ public partial struct Affector_GiveBuffSystem : ISystem, ISystemStartStop
     struct GiveBuffInTrigger_Job : ITriggerEventsJob
     {
         public EntityCommandBuffer Ecb;
-        [ReadOnly] public ComponentLookup<GiveBuffData> GiveBuff_LU;
+        [ReadOnly] public ComponentLookup<GiveBaseHealthBuffData> GiveBuff_LU;
         [ReadOnly] public ComponentLookup<HealthModule> Health_LU;
 
         public void Execute(TriggerEvent triggerEvent)
         {
-            if (GiveBuff_LU.TryGetComponent(triggerEvent.EntityA, out GiveBuffData buff))
+            if (GiveBuff_LU.TryGetComponent(triggerEvent.EntityA, out GiveBaseHealthBuffData buff))
             {
                 if (Health_LU.HasComponent(triggerEvent.EntityB))
                 {
@@ -53,7 +53,7 @@ public partial struct Affector_GiveBuffSystem : ISystem, ISystemStartStop
                     Ecb.AddComponent(entity, basehealthbuff);
                 }
             }
-            else if (GiveBuff_LU.TryGetComponent(triggerEvent.EntityB, out GiveBuffData buff2))
+            else if (GiveBuff_LU.TryGetComponent(triggerEvent.EntityB, out GiveBaseHealthBuffData buff2))
             {
                 if (Health_LU.HasComponent(triggerEvent.EntityA))
                 {

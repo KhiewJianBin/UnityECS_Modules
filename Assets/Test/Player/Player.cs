@@ -15,14 +15,14 @@ public class Player : MonoBehaviour
     {
         public override void Bake(Player authoring)
         {
-            var baseHealthEntity = CreateAdditionalEntity(TransformUsageFlags.None, false, nameof(FloatModule));
+            var baseHealthEntity = CreateAdditionalEntity(TransformUsageFlags.None, false, "Base Health");
             AddComponent(baseHealthEntity, new FloatModule()
             {
                 BaseValue = authoring.BaseHealth
             });
             AddComponent(baseHealthEntity, new BuffableFloat());
 
-            var currentHealthEntity = CreateAdditionalEntity(TransformUsageFlags.None, false, nameof(FloatModule));
+            var currentHealthEntity = CreateAdditionalEntity(TransformUsageFlags.None, false, "Current Health");
             AddComponent(currentHealthEntity, new FloatModule()
             {
                 BaseValue = authoring.CurrentHealth
@@ -35,16 +35,6 @@ public class Player : MonoBehaviour
                 e_BaseHealth = baseHealthEntity,
                 e_CurrentHealth = currentHealthEntity,
             });
-
-            //var buff = CreateAdditionalEntity(TransformUsageFlags.None, false, nameof(BaseHealthBuff));
-            //AddComponent(buff, new BaseHealthBuff()
-            //{
-            //    Target = entityPlayer,
-
-            //    DurationTimer = float.PositiveInfinity,
-            //    Value = 1,
-            //    BuffType = BuffTypes.ValueAdd,
-            //});
 
             AddComponentObject(entityPlayer, new PlayerData()
             {

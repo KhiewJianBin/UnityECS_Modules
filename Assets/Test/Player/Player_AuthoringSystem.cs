@@ -12,13 +12,13 @@ public class Player_AuthoringSystem : MonoBehaviour
         {
             // 1. Create the initial systems in the world
             var healthSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<HealthModuleSystem>();
-            var healthbuffSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<BaseHealthBuffSystem>();
+            var healthbuffSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<BaseHealthBuff_StackableSystem>();
             var BuffableFloatSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<BuffableFloatSystem>();
 
             var PlayerSpawnerSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<PlayerSpawnerSystem>();
             var PlayerUpdateSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<PlayerUpdateSystem>();
 
-            var GiveBuffSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<Affector_GiveBuffSystem>();
+            var GiveBuffSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<Affector_GiveBaseHealthBuffSystem>();
 
             // 2. Find Existing SystemGroup to insert the system into
             var InitSG = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<InitializationSystemGroup>();

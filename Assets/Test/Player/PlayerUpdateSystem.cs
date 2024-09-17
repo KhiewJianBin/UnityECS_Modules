@@ -20,22 +20,11 @@ public partial struct PlayerUpdateSystem : ISystem, ISystemStartStop
     {
         var time = (float)SystemAPI.Time.ElapsedTime;
 
-        //var playersData = SystemAPI.ManagedAPI.GetSingleton<PlayersManagedData>();
-        //var healths = SystemAPI.GetComponentLookup<HealthModule>();
-
-        //foreach ( var player in playersData.Players)
-        //{
-        //    if (healths.TryGetComponent(player.entityRef, out var health))
-        //    {
-        //        player.Health = health.BaseHealth;
-        //    }
-        //}
-
-        foreach (var (player, health, transform) in SystemAPI.Query<PlayerData, RefRO<HealthModule>, RefRW<LocalTransform>>())
+        foreach (var (player, health) in SystemAPI.Query<PlayerData, RefRO<HealthModule>>())
         {
             player.player_ref.baseHealth = health.ValueRO.BaseHealth;
             player.player_ref.currentHleath = health.ValueRO.CurrentHealth;
-            transform.ValueRW.Position = new Vector3(10 * math.sin(time), transform.ValueRW.Position.y, transform.ValueRW.Position.z);
+            //transform.ValueRW.Position = new Vector3(10 * math.sin(time), transform.ValueRW.Position.y, transform.ValueRW.Position.z);
         }
     }
 }

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using UnityEngine;
 
 /// <summary>
 /// Base Buff System
@@ -11,7 +11,7 @@ using UnityEngine;
 /// </summary>
 [BurstCompile]
 [DisableAutoCreation] // Unity will not this System Automatically
-public partial struct BaseHealthBuffSystem : ISystem, ISystemStartStop
+public partial struct BaseHealthBuff_StackableSystem : ISystem, ISystemStartStop
 {
     ComponentLookup<HealthModule> healthModule_LU;
     ComponentLookup<FloatModule> float_LU;
@@ -34,32 +34,34 @@ public partial struct BaseHealthBuffSystem : ISystem, ISystemStartStop
     {
         float deltaTime = SystemAPI.Time.DeltaTime;
 
-
-
-        //Stack Buff
-        EntityCommandBuffer ecb2 = new EntityCommandBuffer(Allocator.TempJob);
-        HashSet<(BaseHealthBuff buff, Entity entity)> existing = new HashSet<(BaseHealthBuff, Entity)>();
-        foreach (var (buff, buffentity) in SystemAPI.Query<RefRW<BaseHealthBuff>>().WithEntityAccess())
+        // Stack Buff
+        if (BaseHealthBuff_Stackable.CanStack)
         {
-            var existingbuff = existing.FirstOrDefault(bhb => bhb.buff.Target == buff.ValueRO.Target);
-
-            if (existingbuff.entity == default)
+            EntityCommandBuffer ecb2 = new(Allocator.TempJob);
+            HashSet<(BaseHealthBuff_Stackable buff, Entity entity)> existing = new();
+            foreach (var (buff, buffentity) in SystemAPI.Query<RefRW<BaseHealthBuff_Stackable>>().WithEntityAccess())
             {
-                existingbuff.buff = buff.ValueRW.Stack(existingbuff.buff);
-                existingbuff.entity = buffentity;
-                existing.Add(existingbuff);
-            }
-            else
-            {
-                existing.Remove(existingbuff);
-                ecb2.DestroyEntity(existingbuff.entity);
+                var existingbuff = existing.FirstOrDefault(bhb => bhb.buff.Target == buff.ValueRO.Target);
 
-                existingbuff.buff = buff.ValueRW.Stack(existingbuff.buff);
-                existing.Add(existingbuff);
+                if (existingbuff.entity == default)
+                {
+                    existingbuff.buff = buff.ValueRW.Stack(existingbuff.buff);
+                    existingbuff.entity = buffentity;
+                    existing.Add(existingbuff);
+                }
+                else
+                {
+                    existing.Remove(existingbuff);
+                    ecb2.DestroyEntity(existingbuff.entity);
+
+                    existingbuff.buff = buff.ValueRW.Stack(existingbuff.buff);
+                    existing.Add(existingbuff);
+                }
             }
+
+            ecb2.Playback(state.EntityManager);
+            ecb2.Dispose();
         }
-        ecb2.Playback(state.EntityManager);
-        ecb2.Dispose();
 
         healthModule_LU.Update(ref state);
         float_LU.Update(ref state);
@@ -69,7 +71,7 @@ public partial struct BaseHealthBuffSystem : ISystem, ISystemStartStop
         var ecbs = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbs.CreateCommandBuffer(state.WorldUnmanaged);
 
-        foreach (var (buff, buffentity) in SystemAPI.Query<RefRW<BaseHealthBuff>>().WithEntityAccess())
+        foreach (var (buff, buffentity) in SystemAPI.Query<RefRW<BaseHealthBuff_Stackable>>().WithEntityAccess())
         {
             var target = buff.ValueRO.Target;
 
@@ -84,7 +86,7 @@ public partial struct BaseHealthBuffSystem : ISystem, ISystemStartStop
             var refbufffloat = bufffloat_LU.GetRefRW(bufftarget);
 
             // Apply Buff, store into bufffloat
-            switch (buff.ValueRO.BuffType)
+            switch (BaseHealthBuff_Stackable.BuffType)
             {
                 case BuffTypes.ValueAdd:
                     refbufffloat.ValueRW.BuffedValue += buff.ValueRO.Value;

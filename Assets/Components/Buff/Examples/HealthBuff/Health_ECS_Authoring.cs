@@ -12,7 +12,7 @@ public class Health_ECS_Authoring : MonoBehaviour
         {
             // 1. Create the initial systems in the world
             var healthSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<HealthModuleSystem>();
-            var healthbuffSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<BaseHealthBuffSystem>();
+            var healthbuffSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<BaseHealthBuff_StackableSystem>();
             var BuffableFloatSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<BuffableFloatSystem>();
 
             // 2. Find Existing SystemGroup to insert the system into

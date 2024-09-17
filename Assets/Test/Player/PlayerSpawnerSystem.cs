@@ -53,13 +53,13 @@ public partial struct PlayerSpawnerSystem : ISystem, ISystemStartStop
             entityManager.AddComponentData(entityPlayer, LocalTransform.FromMatrix(player.transform.localToWorldMatrix));
 
             var buffEntity = entityManager.CreateEntity();
-            entityManager.AddComponentData(buffEntity, new BaseHealthBuff()
+            entityManager.AddComponentData(buffEntity, new BaseHealthBuff_Stackable()
             {
                 Target = entityPlayer,
 
                 DurationTimer = float.PositiveInfinity,
                 Value = 1,
-                BuffType = BuffTypes.ValueAdd,
+                //BuffType = BuffTypes.ValueAdd,
             });
 
             playersData.Players.Add(player);
