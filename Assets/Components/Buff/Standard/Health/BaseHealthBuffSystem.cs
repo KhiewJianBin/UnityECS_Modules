@@ -34,13 +34,7 @@ public partial struct BaseHealthBuffSystem : ISystem, ISystemStartStop
     {
         float deltaTime = SystemAPI.Time.DeltaTime;
 
-        //// Used for add and removal of components, to be done at the end of simulation system (default world)
-        var ecbs = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = ecbs.CreateCommandBuffer(state.WorldUnmanaged);
 
-        healthModule_LU.Update(ref state);
-        float_LU.Update(ref state);
-        bufffloat_LU.Update(ref state);
 
         //Stack Buff
         EntityCommandBuffer ecb2 = new EntityCommandBuffer(Allocator.TempJob);
@@ -49,9 +43,10 @@ public partial struct BaseHealthBuffSystem : ISystem, ISystemStartStop
         {
             var existingbuff = existing.FirstOrDefault(bhb => bhb.buff.Target == buff.ValueRO.Target);
 
-            if (existingbuff.entity != default)
+            if (existingbuff.entity == default)
             {
                 existingbuff.buff = buff.ValueRW.Stack(existingbuff.buff);
+                existingbuff.entity = buffentity;
                 existing.Add(existingbuff);
             }
             else
@@ -65,6 +60,14 @@ public partial struct BaseHealthBuffSystem : ISystem, ISystemStartStop
         }
         ecb2.Playback(state.EntityManager);
         ecb2.Dispose();
+
+        healthModule_LU.Update(ref state);
+        float_LU.Update(ref state);
+        bufffloat_LU.Update(ref state);
+
+        //// Used for add and removal of components, to be done at the end of simulation system (default world)
+        var ecbs = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        EntityCommandBuffer ecb = ecbs.CreateCommandBuffer(state.WorldUnmanaged);
 
         foreach (var (buff, buffentity) in SystemAPI.Query<RefRW<BaseHealthBuff>>().WithEntityAccess())
         {
