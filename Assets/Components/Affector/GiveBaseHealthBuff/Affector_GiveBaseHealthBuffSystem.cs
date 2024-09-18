@@ -2,6 +2,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Physics;
+using UnityEngine;
 
 [BurstCompile]
 [DisableAutoCreation]
@@ -24,6 +25,7 @@ public partial struct Affector_GiveBaseHealthBuffSystem : ISystem, ISystemStartS
         {
             Ecb = ecb,
             GiveBuff_LU = SystemAPI.GetComponentLookup<GiveBaseHealthBuffData>(true),
+            GiveBuff_BLU = SystemAPI.GetBufferLookup<GiveBuffEntityBuffer>(),
             Health_LU = SystemAPI.GetComponentLookup<HealthModule>(true),
 
         }.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
@@ -39,6 +41,7 @@ public partial struct Affector_GiveBaseHealthBuffSystem : ISystem, ISystemStartS
     {
         public EntityCommandBuffer Ecb;
         [ReadOnly] public ComponentLookup<GiveBaseHealthBuffData> GiveBuff_LU;
+        public BufferLookup<GiveBuffEntityBuffer> GiveBuff_BLU;
         [ReadOnly] public ComponentLookup<HealthModule> Health_LU;
 
         public void Execute(TriggerEvent triggerEvent)
@@ -47,6 +50,19 @@ public partial struct Affector_GiveBaseHealthBuffSystem : ISystem, ISystemStartS
             {
                 if (Health_LU.HasComponent(triggerEvent.EntityB))
                 {
+                    GiveBuff_BLU.TryGetBuffer(triggerEvent.EntityA, out DynamicBuffer<GiveBuffEntityBuffer> buffdbuffer);
+
+                    for (int i = 0; i < buffdbuffer.Length; i++)
+                    {
+                        if (buffdbuffer[i].GameBuffToEntity == triggerEvent.EntityB)
+                        {
+                            Debug.Log("This entity already has been buff by this givebuffaffector");
+                            return;
+                        }
+                    }
+
+                    buffdbuffer.Add(new GiveBuffEntityBuffer() { GameBuffToEntity = triggerEvent.EntityB });
+
                     var basehealthbuff = buff.buff;
                     basehealthbuff.Target = triggerEvent.EntityB;
                     var entity = Ecb.CreateEntity();
@@ -57,6 +73,19 @@ public partial struct Affector_GiveBaseHealthBuffSystem : ISystem, ISystemStartS
             {
                 if (Health_LU.HasComponent(triggerEvent.EntityA))
                 {
+                    GiveBuff_BLU.TryGetBuffer(triggerEvent.EntityB, out DynamicBuffer<GiveBuffEntityBuffer> buffdbuffer);
+
+                    for (int i = 0; i < buffdbuffer.Length; i++)
+                    {
+                        if (buffdbuffer[i].GameBuffToEntity == triggerEvent.EntityA)
+                        {
+                            Debug.Log("This entity already has been buff by this givebuffaffector");
+                            return;
+                        }
+                    }
+
+                    buffdbuffer.Add(new GiveBuffEntityBuffer() { GameBuffToEntity = triggerEvent.EntityA });
+
                     var basehealthbuff = buff2.buff;
                     basehealthbuff.Target = triggerEvent.EntityA;
                     var entity = Ecb.CreateEntity();

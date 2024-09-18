@@ -10,11 +10,13 @@ public class Affector_GiveBaseHealthBuff : MonoBehaviour
     {
         public override void Bake(Affector_GiveBaseHealthBuff authoring)
         {
-            var entityPlayer = GetEntity(TransformUsageFlags.Dynamic);
-            AddComponent(entityPlayer, new GiveBaseHealthBuffData()
+            var entity = GetEntity(TransformUsageFlags.Dynamic);
+            authoring.buff.CameFromEntity = entity;
+            AddComponent(entity, new GiveBaseHealthBuffData()
             {
                 buff = authoring.buff
             });
+            AddBuffer<GiveBuffEntityBuffer>(entity);
         }
     }
 }
@@ -22,6 +24,10 @@ public class Affector_GiveBaseHealthBuff : MonoBehaviour
 public struct GiveBaseHealthBuffData : IComponentData
 {
     public BaseHealthBuff_Stackable buff;
+}
 
-    //public Entity 
+[InternalBufferCapacity(16)]
+public struct GiveBuffEntityBuffer : IBufferElementData
+{
+    public Entity GameBuffToEntity;
 }
