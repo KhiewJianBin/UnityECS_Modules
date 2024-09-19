@@ -11,12 +11,13 @@ public class Affector_GiveBaseHealthBuff : MonoBehaviour
         public override void Bake(Affector_GiveBaseHealthBuff authoring)
         {
             var entity = GetEntity(TransformUsageFlags.Dynamic);
-            authoring.buff.CameFromEntity = entity;
+            authoring.buff.AppliedByEntity = entity;
             AddComponent(entity, new GiveBaseHealthBuffData()
             {
                 buff = authoring.buff
             });
-            AddBuffer<GiveBuffEntityBuffer>(entity);
+            AddBuffer<ApplyEntityBuffer>(entity);
+            AddBuffer<RemoveEntityBuffer>(entity);
         }
     }
 }
@@ -26,8 +27,16 @@ public struct GiveBaseHealthBuffData : IComponentData
     public BaseHealthBuff_Stackable buff;
 }
 
+// Use to keep track of the entities that this affector have given
 [InternalBufferCapacity(16)]
-public struct GiveBuffEntityBuffer : IBufferElementData
+public struct ApplyEntityBuffer : IBufferElementData
+{
+    public Entity GameBuffToEntity;
+}
+
+// Use to queue entities that the affector has given for removal
+[InternalBufferCapacity(16)]
+public struct RemoveEntityBuffer : IBufferElementData
 {
     public Entity GameBuffToEntity;
 }

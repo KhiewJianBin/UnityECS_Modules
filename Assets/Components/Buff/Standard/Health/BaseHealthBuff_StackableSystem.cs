@@ -16,11 +16,13 @@ public partial struct BaseHealthBuff_StackableSystem : ISystem, ISystemStartStop
     ComponentLookup<HealthModule> healthModule_LU;
     ComponentLookup<FloatModule> float_LU;
     ComponentLookup<BuffableFloat> bufffloat_LU;
+    BufferLookup<RemoveEntityBuffer> RB_LU;
     public void OnCreate(ref SystemState state)
     {
         healthModule_LU = state.GetComponentLookup<HealthModule>(true);
         float_LU = state.GetComponentLookup<FloatModule>(true);
         bufffloat_LU = state.GetComponentLookup<BuffableFloat>(false);
+        RB_LU = state.GetBufferLookup<RemoveEntityBuffer>();
     }
     public void OnDestroy(ref SystemState state) { }
     public void OnStartRunning(ref SystemState state) { }
@@ -66,6 +68,7 @@ public partial struct BaseHealthBuff_StackableSystem : ISystem, ISystemStartStop
         healthModule_LU.Update(ref state);
         float_LU.Update(ref state);
         bufffloat_LU.Update(ref state);
+        RB_LU.Update(ref state);
 
         //// Used for add and removal of components, to be done at the end of simulation system (default world)
         var ecbs = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
@@ -105,7 +108,13 @@ public partial struct BaseHealthBuff_StackableSystem : ISystem, ISystemStartStop
             bool Expired = buff.ValueRW.DurationTimer <= 0;
             if (Expired)
             {
+                if (RB_LU.TryGetBuffer(buff.ValueRO.AppliedByEntity, out var buffer))
+                {
+                    buffer.Add(new RemoveEntityBuffer() { GameBuffToEntity = target });
+                }
+
                 ecb.DestroyEntity(buffentity);
+                
                 //Debug.Log("Expired, Removing" + buffentity);
             }
         }

@@ -12,7 +12,7 @@ public struct BaseHealthBuff_Stackable : IComponentData
     public static StackTypes StackType = StackTypes.Value;
     public static bool CanStack => StackType != 0;
 
-    public Entity CameFromEntity;
+    public Entity AppliedByEntity;
 
     public BaseHealthBuff_Stackable Stack(BaseHealthBuff_Stackable other)
     {
