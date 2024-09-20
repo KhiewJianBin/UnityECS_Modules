@@ -20,6 +20,8 @@ public class Player_AuthoringSystem : MonoBehaviour
 
             var GiveBuffSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<Affector_GiveBaseHealthBuffSystem>();
 
+            var GravityFactorHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<Affector_GravityFactorSystem>();
+            
             // 2. Find Existing SystemGroup to insert the system into
             var InitSG = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<InitializationSystemGroup>();
             var SimSG = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<SimulationSystemGroup>();
@@ -34,6 +36,7 @@ public class Player_AuthoringSystem : MonoBehaviour
             // ========================  InitializationSystemGroup   ==============================
             InitSG.AddSystemToUpdateList(PlayerSpawnerSystemHandle);
             InitSG.AddSystemToUpdateList(GiveBuffSystemHandle);
+            InitSG.AddSystemToUpdateList(GravityFactorHandle);
 
             // ===========================  SimulationSystemGroup       ===========================
             SimSG.AddSystemToUpdateList(BuffStartSG);

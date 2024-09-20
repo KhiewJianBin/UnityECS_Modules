@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Physics;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -40,6 +41,8 @@ public class Player : MonoBehaviour
             {
                 player_ref = authoring
             });
+
+            AddComponent(entityPlayer, new PhysicsGravityFactor() { Value = 1 });
         }
     }
 }
