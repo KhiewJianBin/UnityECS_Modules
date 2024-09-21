@@ -5,6 +5,7 @@ public class Affector_GiveBaseHealthBuff : MonoBehaviour
 {
     [SerializeField]
     public BaseHealthBuff_Stackable buff;
+    public bool ApplyOnce = false;
 
     class Baker : Baker<Affector_GiveBaseHealthBuff>
     {
@@ -16,6 +17,8 @@ public class Affector_GiveBaseHealthBuff : MonoBehaviour
             {
                 buff = authoring.buff
             });
+
+            if (!authoring.ApplyOnce) return;
             AddBuffer<ApplyEntityBuffer>(entity);
             AddBuffer<RemoveEntityBuffer>(entity);
         }

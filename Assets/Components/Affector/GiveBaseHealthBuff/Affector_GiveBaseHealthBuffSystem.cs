@@ -64,6 +64,7 @@ public partial struct Affector_GiveBaseHealthBuffSystem : ISystem, ISystemStartS
 
         public void Execute(TriggerEvent triggerEvent)
         {
+            //Debug.Log("Collision");
             if (GiveBuff_LU.TryGetComponent(triggerEvent.EntityA, out GiveBaseHealthBuffData buff))
             {
                 if (Health_LU.HasComponent(triggerEvent.EntityB))
