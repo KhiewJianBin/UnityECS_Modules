@@ -2,6 +2,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Physics;
+using UnityEngine;
 
 [BurstCompile]
 [DisableAutoCreation]
@@ -69,18 +70,19 @@ public partial struct Affector_GiveBaseHealthBuffSystem : ISystem, ISystemStartS
             {
                 if (Health_LU.HasComponent(triggerEvent.EntityB))
                 {
-                    GiveBuff_BLU.TryGetBuffer(triggerEvent.EntityA, out DynamicBuffer<ApplyEntityBuffer> buffdbuffer);
-
-                    for (int i = 0; i < buffdbuffer.Length; i++)
+                    if (GiveBuff_BLU.TryGetBuffer(triggerEvent.EntityA, out DynamicBuffer<ApplyEntityBuffer> buffdbuffer))
                     {
-                        if (buffdbuffer[i].GameBuffToEntity == triggerEvent.EntityB)
+                        for (int i = 0; i < buffdbuffer.Length; i++)
                         {
-                            //Debug.Log("This entity already has been buff by this givebuffaffector");
-                            return;
+                            if (buffdbuffer[i].GameBuffToEntity == triggerEvent.EntityB)
+                            {
+                                //Debug.Log("This entity already has been buff by this givebuffaffector");
+                                return;
+                            }
                         }
-                    }
 
-                    buffdbuffer.Add(new ApplyEntityBuffer() { GameBuffToEntity = triggerEvent.EntityB });
+                        buffdbuffer.Add(new ApplyEntityBuffer() { GameBuffToEntity = triggerEvent.EntityB });
+                    }
 
                     var basehealthbuff = buff.buff;
                     basehealthbuff.Target = triggerEvent.EntityB;
@@ -92,18 +94,19 @@ public partial struct Affector_GiveBaseHealthBuffSystem : ISystem, ISystemStartS
             {
                 if (Health_LU.HasComponent(triggerEvent.EntityA))
                 {
-                    GiveBuff_BLU.TryGetBuffer(triggerEvent.EntityB, out DynamicBuffer<ApplyEntityBuffer> buffdbuffer);
-
-                    for (int i = 0; i < buffdbuffer.Length; i++)
+                    if (GiveBuff_BLU.TryGetBuffer(triggerEvent.EntityB, out DynamicBuffer<ApplyEntityBuffer> buffdbuffer))
                     {
-                        if (buffdbuffer[i].GameBuffToEntity == triggerEvent.EntityA)
+                        for (int i = 0; i < buffdbuffer.Length; i++)
                         {
-                            //Debug.Log("This entity already has been buff by this givebuffaffector");
-                            return;
+                            if (buffdbuffer[i].GameBuffToEntity == triggerEvent.EntityA)
+                            {
+                                //Debug.Log("This entity already has been buff by this givebuffaffector");
+                                return;
+                            }
                         }
-                    }
 
-                    buffdbuffer.Add(new ApplyEntityBuffer() { GameBuffToEntity = triggerEvent.EntityA });
+                        buffdbuffer.Add(new ApplyEntityBuffer() { GameBuffToEntity = triggerEvent.EntityA });
+                    }
 
                     var basehealthbuff = buff2.buff;
                     basehealthbuff.Target = triggerEvent.EntityA;

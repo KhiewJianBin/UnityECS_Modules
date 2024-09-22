@@ -27,7 +27,7 @@ namespace Examples.HealthBuffZones
                 player.player_ref.baseHealth = health.ValueRO.BaseHealth;
                 player.player_ref.currentHleath = health.ValueRO.CurrentHealth;
 
-                transform.ValueRW.Position = new float3(10 * Mathf.Sin(time), transform.ValueRW.Position.y, transform.ValueRW.Position.z);
+                transform.ValueRW.Position = new float3(transform.ValueRW.Position.x, transform.ValueRW.Position.y, 10 * Mathf.Sin(time));
             }
         }
     }

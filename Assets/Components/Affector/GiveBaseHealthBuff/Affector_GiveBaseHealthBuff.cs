@@ -19,6 +19,7 @@ public class Affector_GiveBaseHealthBuff : MonoBehaviour
             });
 
             if (!authoring.ApplyOnce) return;
+
             AddBuffer<ApplyEntityBuffer>(entity);
             AddBuffer<RemoveEntityBuffer>(entity);
         }
