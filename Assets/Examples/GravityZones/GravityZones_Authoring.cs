@@ -18,7 +18,8 @@ namespace Examples.GravityZones
                 var PlayerUpdateSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<PlayerUpdateSystem>();
 
                 var GravityFactorSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<Affector_GravityFactorSystem>();
-                var GravityOverrideSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<Affector_GravityOverrideSystem>();
+                var GiveGravityOverrideSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<Affector_GiveGravityOverrideSystem>();
+                var gravityOverrideSystemHandle = World.DefaultGameObjectInjectionWorld.CreateSystem<GravityOverrideSystem>();
 
                 // 2. Find Existing SystemGroup to insert the system into
                 var InitSG = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<InitializationSystemGroup>();
@@ -33,12 +34,14 @@ namespace Examples.GravityZones
 
                 // ========================  InitializationSystemGroup   ==============================
                 InitSG.AddSystemToUpdateList(GravityFactorSystemHandle);
-                InitSG.AddSystemToUpdateList(GravityOverrideSystemHandle);
+                InitSG.AddSystemToUpdateList(GiveGravityOverrideSystemHandle);
+                //InitSG.AddSystemToUpdateList(gravityOverrideSystemHandle);
 
                 // ===========================  SimulationSystemGroup       ===========================
                 SimSG.AddSystemToUpdateList(BuffStartSG);
                 {
                     BuffStartSG.AddSystemToUpdateList(healthbuffSystemHandle);
+                    BuffStartSG.AddSystemToUpdateList(gravityOverrideSystemHandle);
                 }
                 SimSG.AddSystemToUpdateList(ModuleSG);
                 {
