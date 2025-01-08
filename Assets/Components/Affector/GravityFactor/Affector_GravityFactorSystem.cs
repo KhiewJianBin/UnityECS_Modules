@@ -11,6 +11,7 @@ public partial struct Affector_GravityFactorSystem : ISystem, ISystemStartStop
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GravityFactorData>();
+        state.RequireForUpdate<SimulationSingleton>();
     }
     public void OnDestroy(ref SystemState state) { }
     public void OnStartRunning(ref SystemState state) { }
